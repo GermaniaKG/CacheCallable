@@ -1,0 +1,35 @@
+{
+	"name": "germania-kg/cachecallable",
+
+	"keywords": [
+		"PSR-6",
+   	"Cache",
+		"Callable",
+		"PHP",
+		"Caching",
+		"Middleware"
+	],
+
+	"authors": [
+		{
+			"name":  "Carsten Witt",
+			"email": "carstenwitt@germania-kg.de",
+			"role":  "Developer"
+		}
+	],
+
+	"autoload": {
+		"psr-4": {
+			"Germania\\Cache\\": "src"
+		}
+	},
+
+	"require-dev": {
+			"satooshi/php-coveralls": "^1.0",
+			"phpunit/phpunit": "^5.2",
+		  "monolog/monolog": "^1.21"
+	},
+	"require": {
+		"psr/cache": "^1.0"
+	}
+}
