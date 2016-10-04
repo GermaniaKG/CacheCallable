@@ -6,6 +6,15 @@ Caching business is pretty much always similar and can be outlined like this: **
 
 **The CacheCallable class wraps any CacheItemPool and reduces caching business to a handy and customizable Callable.**
 
+##Installation
+
+Use Composer:
+
+```bash
+$ composer require germania-kg/cachecallable
+```
+
+
 ##Example
 Although this example uses [phpfastcache](http://www.phpfastcache.com/), you should be able to pass in any [Cache Item Pool](http://www.php-fig.org/psr/psr-6/#cacheitempoolinterface). Use your favourite  [PSR-3 Logger](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md#3-psrlogloggerinterface); this example will use the well-known [Monolog](https://github.com/Seldaek/monolog). 
 
@@ -111,6 +120,32 @@ $config = $wrapped_cache("my-config", function() {
 $something_unique = sha1($_SERVER['REQUEST_URI']);
 $page_html = $wrapped_cache( $something_unique );
 ```
+
+
+##Development and testing
+
+Clone repo, use [Git Flow](https://github.com/nvie/gitflow). Work on *develop* branch.
+
+```bash
+# Clone Repo
+$ git clone git@github.com:GermaniaKG/CacheCallable.git germania-cachecallable
+$ cd germania-cachecallable
+$ composer install
+```
+
+For testing, copy PHPUnit configuration file and customize if needed.
+
+```bash
+$ cp phpunit.xml.dist phpunit.xml
+$ phpunit
+```
+
+###TODO
+
+**Create better abstractions of PSR-6 interfaces:** The *tests\CacheCallableTest* currently use a quick and dirty implementation of 
+the [PSR-6: Caching Interface](http://www.php-fig.org/psr/psr-6/) interfaces. See *mocks* namespace in *tests* directory.
+
+
 
 
 ##Useful Links
