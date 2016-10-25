@@ -24,12 +24,20 @@
 		}
 	},
 
+  "autoload-dev": {
+      "psr-4": {
+      	"mocks\\": "tests/mocks",
+      	"tests\\": "tests/src"
+      }
+  },
+
 	"require-dev": {
 			"satooshi/php-coveralls": "^1.0",
 			"phpunit/phpunit": "^5.2",
 		  "monolog/monolog": "^1.21"
 	},
 	"require": {
-		"psr/cache": "^1.0"
+		"psr/cache": "^1.0",
+		"psr/log": "^1.0"
 	}
 }
