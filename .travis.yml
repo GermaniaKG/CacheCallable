@@ -5,7 +5,7 @@ php:
 env:
 
 before_script:
-  - composer install --no-interaction
+  - composer update --no-interaction
 
 script:
   - phpunit --configuration tests/phpunit.xml
