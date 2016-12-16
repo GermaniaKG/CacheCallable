@@ -26,8 +26,8 @@
 
   "autoload-dev": {
       "psr-4": {
-      	"mocks\\": "tests/mocks",
-      	"tests\\": "tests/src"
+      	"mocks\\": "tests/mocks/",
+      	"tests\\": "tests/src/"
       }
   },
 
