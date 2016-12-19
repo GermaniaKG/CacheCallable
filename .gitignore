@@ -55,6 +55,3 @@ logs/*
 tests/build
 build
 phpunit.xml
-
-!tests/phpunit.xml
-

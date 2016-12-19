@@ -1,10 +1,15 @@
 #CacheCallable
 
+[![Build Status](https://travis-ci.org/GermaniaKG/CacheCallable.svg?branch=master)](https://travis-ci.org/GermaniaKG/CacheCallable)
+
 **Callable convenience wrapper around PSR-6 [Cache Item Pools](http://www.php-fig.org/psr/psr-6/#cacheitempoolinterface): Seamlessly creates, returns, and stores your data.**
 
-Caching business is pretty much always similar and can be outlined like this: **Is caching enabled at all?** If not, delete any according older entry first. Create and return fresh content anyway, ending up here. **Does a given item exist?** If so, return item content; Otherwise, create, store and return content.
+Caching business is pretty much always similar and can be outlined like this: 
 
-**The CacheCallable class wraps any CacheItemPool and reduces caching business to a handy and customizable Callable.**
+1. **Is caching enabled at all?**  If not, delete any according older entry first. Create and return fresh content anyway, ending up here.
+2.  **Does a given item exist?** If so, return item content; Otherwise, create, store and return content.
+
+The CacheCallable class reduces these steps to a handy and customizable Callable.
 
 ##Installation
 
