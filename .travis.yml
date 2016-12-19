@@ -5,11 +5,11 @@ php:
 env:
 
 before_script:
+  - cp phpunit.xml.dist phpunit.xml
   - composer update --no-interaction
 
 script:
-  - phpunit --configuration tests/phpunit.xml
-
+  - phpunit
 
 after_script:
 
