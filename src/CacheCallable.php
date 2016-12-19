@@ -11,7 +11,7 @@ class CacheCallable
     /**
      * @var mixed
      */
-    public $data   = null;
+    public $data = null;
 
     /**
      * @var LifeTimeInterface
@@ -41,10 +41,10 @@ class CacheCallable
      * @param Callable               $content_creator Callable for content creation
      * @param LoggerInterface        $logger          Optional PSR-3 Logger; defaults to NullLogger
      */
-    public function __construct( CacheItemPoolInterface $cacheitempool, $lifetime, Callable $content_creator, LoggerInterface $logger = null)
+    public function __construct(CacheItemPoolInterface $cacheitempool, $lifetime, Callable $content_creator, LoggerInterface $logger = null)
     {
         $this->cacheitempool   = $cacheitempool;
-        $this->lifetime        = $lifetime instanceOf LifeTimeInterface ? $lifetime : new LifeTime( $lifetime );
+        $this->lifetime        = $lifetime instanceOf LifeTimeInterface ? $lifetime : new LifeTime($lifetime);
         $this->content_creator = $content_creator;
         $this->logger          = $logger instanceOf LoggerInterface ? $logger : new NullLogger;
     }
@@ -56,7 +56,7 @@ class CacheCallable
      * @return mixed
      */
 
-    public function __invoke( $keyword, Callable $content_creator = null )
+    public function __invoke($keyword, Callable $content_creator = null)
     {
         $lifetime        = $this->lifetime;
         $logger          = $this->logger;
@@ -65,7 +65,7 @@ class CacheCallable
         if (is_callable($content_creator)) {
             $content_creator_type = "custom";
         } else {
-            $content_creator_type="default";
+            $content_creator_type = "default";
             $content_creator = $this->content_creator;
         }
 
@@ -75,14 +75,14 @@ class CacheCallable
         ]);
 
         if ($lifetime->getValue() > 0) :
-            $logger->debug("Caching enabled", ['lifetime' => $lifetime->getValue()]);
+            $logger->debug("Caching enabled", [ 'lifetime' => $lifetime->getValue() ]);
         else:
-            $logger->notice( "Caching disabled");
+            $logger->notice("Caching disabled");
 
             // Remove that certain resource to avoid outdated results
-            if ($cacheitempool->hasItem( $keyword )) :
-                $logger->debug("Delete cached item", ['keyword' => $keyword]);
-                $cacheitempool->deleteItem( $keyword );
+            if ($cacheitempool->hasItem($keyword)) :
+                $logger->debug("Delete cached item", [ 'keyword' => $keyword ]);
+                $cacheitempool->deleteItem($keyword);
             else:
                 $logger->debug("No cached item to delete");
             endif;
@@ -99,7 +99,7 @@ class CacheCallable
 
 
         // If found in cache:
-        if($cachedContent->isHit()):
+        if ($cachedContent->isHit()):
             $logger->info("Found in cache");
 
 
@@ -111,7 +111,7 @@ class CacheCallable
 
             // Create content
             $content       = $content_creator();
-            $cachedContent = $cachedContent->set( $content );
+            $cachedContent = $cachedContent->set($content);
 
             if ($old_lifetime != $lifetime->getValue()) {
                 $logger->info("Lifetime has changed to " . $lifetime->getValue());
@@ -119,8 +119,8 @@ class CacheCallable
 
             // Store in cache if needed
             if ($lifetime->getValue() > 0) :
-                $logger->info("Store in cache", ['lifetime' => $lifetime->getValue()]);
-                $cachedContent->expiresAfter( $lifetime->getValue() );
+                $logger->info("Store in cache", [ 'lifetime' => $lifetime->getValue() ]);
+                $cachedContent->expiresAfter($lifetime->getValue());
                 $cacheitempool->save($cachedContent);
             else:
                 $logger->notice("DO NOT store in cache");

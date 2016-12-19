@@ -1,6 +1,9 @@
 #CacheCallable
 
 [![Build Status](https://travis-ci.org/GermaniaKG/CacheCallable.svg?branch=master)](https://travis-ci.org/GermaniaKG/CacheCallable)
+[![Code Coverage](https://scrutinizer-ci.com/g/GermaniaKG/CacheCallable/badges/coverage.png)](https://scrutinizer-ci.com/g/GermaniaKG/CacheCallable/)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/GermaniaKG/CacheCallable/badges/quality-score.png)](https://scrutinizer-ci.com/g/GermaniaKG/CacheCallable/)
+
 
 **Callable convenience wrapper around PSR-6 [Cache Item Pools](http://www.php-fig.org/psr/psr-6/#cacheitempoolinterface): Seamlessly creates, returns, and stores your data.**
 

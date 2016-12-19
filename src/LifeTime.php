@@ -5,9 +5,9 @@ class LifeTime implements LifeTimeInterface {
 
     public $seconds = 0;
 
-    public function __construct( $seconds )
+    public function __construct($seconds)
     {
-        $this->setValue( $seconds );
+        $this->setValue($seconds);
     }
 
     public function getValue()
@@ -15,7 +15,7 @@ class LifeTime implements LifeTimeInterface {
         return $this->seconds;
     }
 
-    public function setValue( $seconds )
+    public function setValue($seconds)
     {
         $this->seconds = $seconds;
         return $this;
