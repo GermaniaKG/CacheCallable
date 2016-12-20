@@ -1,6 +1,9 @@
 {
 	"name": "germania-kg/cachecallable",
 
+	"type":        "library",
+	"license":     "MIT",
+
 	"keywords": [
 		"PSR-6",
    	"Cache",
