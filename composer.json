@@ -1,6 +1,10 @@
 {
 	"name": "germania-kg/cachecallable",
 
+	"description": "Callable convenience wrapper around PSR-6 Cache Item Pools: Seamlessly create, return, and store your data.",
+
+	"keywords": [ "cache", "PSR-6", "PSR6", "Callable" ],
+
 	"type":        "library",
 	"license":     "MIT",
 
