@@ -10,21 +10,21 @@
 
 Caching business is pretty much always similar and can be outlined like this: 
 
-1. **Is caching enabled at all?**  If not, delete any according older entry first. Create and return fresh content anyway, ending up here.
-2.  **Does a given item exist?** If so, return item content; Otherwise, create, store and return content.
+1. **Is caching enabled at all?**  If not, delete any according older entry first.  
+	Create and return fresh content anyway, ending up here.
+2.  **Does a given item exist?** If so, return item content;  
+	Otherwise, create, store and return content.
 
-The CacheCallable class reduces these steps to a handy and customizable Callable.
+**The *CacheCallable* class reduces these steps to a handy and customizable Callable.**
 
-##Installation
-
-Use Composer:
+## Installation
 
 ```bash
 $ composer require germania-kg/cachecallable
 ```
 
 
-##Example
+## Example
 Although this example uses [phpfastcache](http://www.phpfastcache.com/), you should be able to pass in any [Cache Item Pool](http://www.php-fig.org/psr/psr-6/#cacheitempoolinterface). Use your favourite  [PSR-3 Logger](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md#3-psrlogloggerinterface); this example will use the well-known [Monolog](https://github.com/Seldaek/monolog). 
 
 ```php
@@ -59,7 +59,7 @@ $something_unique = sha1($_SERVER['REQUEST_URI']);
 echo $wrapped_cache( $something_unique );
 ```
 
-##How to change lifetime during script runtime
+## How to change lifetime during script runtime
 
 Think of a webpage that turns out to be not cached during script runtime — *after* we set up the Cache wrapper. For this reason, the Cache wrapper constructor also accepts a **LifeTimeInterface** implementation with a *getValue* method:
 
@@ -102,7 +102,7 @@ MyLogger DEBUG Lifetime after content creation: 0
 MyLogger NOTICE DO NOT store in cache
 ```
 
-##How to override content creation
+## How to override content creation
 
 If you prefer singleton services, you may *invoke* the CacheCallable with a custom content creator parameter to override the default one:
 
