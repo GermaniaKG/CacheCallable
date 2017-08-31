@@ -1,8 +1,9 @@
-#CacheCallable
+# Germania KG · CacheCallable
 
 [![Build Status](https://travis-ci.org/GermaniaKG/CacheCallable.svg?branch=master)](https://travis-ci.org/GermaniaKG/CacheCallable)
 [![Code Coverage](https://scrutinizer-ci.com/g/GermaniaKG/CacheCallable/badges/coverage.png)](https://scrutinizer-ci.com/g/GermaniaKG/CacheCallable/)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/GermaniaKG/CacheCallable/badges/quality-score.png)](https://scrutinizer-ci.com/g/GermaniaKG/CacheCallable/)
+[![Build Status](https://scrutinizer-ci.com/g/GermaniaKG/CacheCallable/badges/build.png?b=master)](https://scrutinizer-ci.com/g/GermaniaKG/CacheCallable/build-status/master)
 
 
 **Callable convenience wrapper around PSR-6 [Cache Item Pools](http://www.php-fig.org/psr/psr-6/#cacheitempoolinterface): Seamlessly creates, returns, and stores your data.**
@@ -130,28 +131,29 @@ $page_html = $wrapped_cache( $something_unique );
 ```
 
 
-##Development and testing
+## Issues
 
-Clone repo, use [Git Flow](https://github.com/nvie/gitflow). Work on *develop* branch.
+The PSR-6 Caching Interface mock in *CacheCallableTest* could need an overhaul. Discuss on [#issue 3][i3]
+
+[i0]: https://github.com/GermaniaKG/CacheCallable/issues 
+[i3]: https://github.com/GermaniaKG/CacheCallable/issues/3
+
+## Development
 
 ```bash
-# Clone Repo
 $ git clone git@github.com:GermaniaKG/CacheCallable.git germania-cachecallable
 $ cd germania-cachecallable
 $ composer install
 ```
 
-For testing, copy PHPUnit configuration file and customize if needed.
+## Unit tests
+
+Either copy `phpunit.xml.dist` to `phpunit.xml` and adapt to your needs, or leave as is. 
+Run [PhpUnit](https://phpunit.de/) like this:
 
 ```bash
-$ cp phpunit.xml.dist phpunit.xml
-$ phpunit
+$ vendor/bin/phpunit
 ```
-
-###TODO
-
-**Create better abstractions of PSR-6 interfaces:** The *tests\CacheCallableTest* currently use a quick and dirty implementation of 
-the [PSR-6: Caching Interface](http://www.php-fig.org/psr/psr-6/) interfaces. See *mocks* namespace in *tests* directory.
 
 
 
