@@ -14,7 +14,8 @@ use mocks\CacheItemPoolMock;
 use mocks\CacheItemMock;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
-class CacheCallableTest extends \PHPUnit_Framework_TestCase
+
+class CacheCallableTest extends \PHPUnit\Framework\TestCase
 {
 
     public $predefined_creator_content = 'predefined_content';

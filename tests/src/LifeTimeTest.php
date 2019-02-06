@@ -4,7 +4,7 @@ namespace tests;
 use Germania\Cache\LifeTime;
 
 
-class LifeTimeTest extends \PHPUnit_Framework_TestCase
+class LifeTimeTest extends \PHPUnit\Framework\TestCase
 {
 
     public function testGetter() {
