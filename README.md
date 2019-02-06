@@ -1,9 +1,14 @@
 # Germania KG · CacheCallable
 
-[![Build Status](https://travis-ci.org/GermaniaKG/CacheCallable.svg?branch=master)](https://travis-ci.org/GermaniaKG/CacheCallable)
-[![Code Coverage](https://scrutinizer-ci.com/g/GermaniaKG/CacheCallable/badges/coverage.png)](https://scrutinizer-ci.com/g/GermaniaKG/CacheCallable/)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/GermaniaKG/CacheCallable/badges/quality-score.png)](https://scrutinizer-ci.com/g/GermaniaKG/CacheCallable/)
+
+
+[![Packagist](https://img.shields.io/packagist/v/germania-kg/cachecallable.svg?style=flat)](https://packagist.org/packages/germania-kg/cachecallable)
+[![PHP version](https://img.shields.io/packagist/php-v/germania-kg/cachecallable.svg)](https://packagist.org/packages/germania-kg/cachecallable)
+[![Build Status](https://img.shields.io/travis/GermaniaKG/CacheCallable.svg?label=Travis%20CI)](https://travis-ci.org/GermaniaKG/CacheCallable)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/GermaniaKG/CacheCallable/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/GermaniaKG/CacheCallable/?branch=master)
+[![Code Coverage](https://scrutinizer-ci.com/g/GermaniaKG/CacheCallable/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/GermaniaKG/CacheCallable/?branch=master)
 [![Build Status](https://scrutinizer-ci.com/g/GermaniaKG/CacheCallable/badges/build.png?b=master)](https://scrutinizer-ci.com/g/GermaniaKG/CacheCallable/build-status/master)
+
 
 
 **Callable convenience wrapper around PSR-6 [Cache Item Pools](http://www.php-fig.org/psr/psr-6/#cacheitempoolinterface): Seamlessly creates, returns, and stores your data.**
@@ -17,12 +22,12 @@ Caching business is pretty much always similar and can be outlined like this:
 
 **The *CacheCallable* class reduces these steps to a handy and customizable Callable.**
 
-## Installation
+
+## Installation with Composer
 
 ```bash
 $ composer require germania-kg/cachecallable
 ```
-
 
 ## Example
 Although this example uses [phpfastcache](http://www.phpfastcache.com/), you should be able to pass in any [Cache Item Pool](http://www.php-fig.org/psr/psr-6/#cacheitempoolinterface). Use your favourite  [PSR-3 Logger](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md#3-psrlogloggerinterface); this example will use the well-known [Monolog](https://github.com/Seldaek/monolog). 
@@ -141,17 +146,18 @@ The PSR-6 Caching Interface mock in *CacheCallableTest* could need an overhaul. 
 ## Development
 
 ```bash
-$ git clone git@github.com:GermaniaKG/CacheCallable.git germania-cachecallable
-$ cd germania-cachecallable
+$ git clone https://github.com/GermaniaKG/CacheCallable.git
+$ cd CacheCallable
 $ composer install
 ```
 
 ## Unit tests
 
-Either copy `phpunit.xml.dist` to `phpunit.xml` and adapt to your needs, or leave as is. 
-Run [PhpUnit](https://phpunit.de/) like this:
+Either copy `phpunit.xml.dist` to `phpunit.xml` and adapt to your needs, or leave as is. Run [PhpUnit](https://phpunit.de/) test or composer scripts like this:
 
 ```bash
+$ composer test
+# or
 $ vendor/bin/phpunit
 ```
 
