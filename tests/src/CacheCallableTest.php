@@ -33,8 +33,8 @@ class CacheCallableTest extends \PHPUnit\Framework\TestCase
         );
 
         // Code smell: Check member vars
-        $this->assertInstanceOf('Germania\Cache\LifeTimeInterface', $sut->lifetime);
-        $this->assertInstanceOf('Psr\Log\LoggerInterface',          $sut->logger);
+        $this->assertInstanceOf(LifeTimeInterface::class, $sut->lifetime);
+        $this->assertInstanceOf(LoggerInterface::class,   $sut->logger);
 
         // Check content will be created
         $this->assertEquals( $callable_mock(), $sut("any_key_here"));
@@ -178,6 +178,8 @@ class CacheCallableTest extends \PHPUnit\Framework\TestCase
         };
 
         return array(
+            [ $empty_item_pool_mock, 0, $creator_mock, $logger_mock],
+            [ $empty_item_pool_mock, new LifeTime(0), $creator_mock, $logger_mock],
             [ $empty_item_pool_mock, $lifetime_int, $creator_mock, $logger_mock],
             [ $empty_item_pool_mock, $lifetime_int, $creator_mock, null],
             [ $empty_item_pool_mock, $lifetime_object_revealed, $creator_mock, $logger_mock],

@@ -74,8 +74,11 @@ class CacheCallable
             'content_creator' => $content_creator_type
         ]);
 
-        if ($lifetime->getValue() > 0) :
-            $logger->debug("Caching enabled", [ 'lifetime' => $lifetime->getValue() ]);
+
+        $lifetime_value = $lifetime->getValue();
+
+        if ($lifetime_value > 0) :
+            $logger->debug("Caching enabled", [ 'lifetime' => $lifetime_value ]);
         else:
             $logger->notice("Caching disabled");
 
@@ -107,24 +110,14 @@ class CacheCallable
         else:
             $logger->info("Not found; Content to be created.");
 
-            $old_lifetime = $lifetime->getValue();
-
             // Create content
-            $content       = $content_creator();
+            $content    = $content_creator();
             $cache_item = $cache_item->set($content);
 
-            if ($old_lifetime != $lifetime->getValue()) {
-                $logger->info("Lifetime has changed to " . $lifetime->getValue());
-            }
-
             // Store in cache if needed
-            if ($lifetime->getValue() > 0) :
-                $logger->info("Store in cache", [ 'lifetime' => $lifetime->getValue() ]);
-                $cache_item->expiresAfter($lifetime->getValue());
-                $cacheitempool->save($cache_item);
-            else:
-                $logger->notice("DO NOT store in cache");
-            endif;
+            $logger->info("Store in cache", [ 'lifetime' => $lifetime_value ]);
+            $cache_item->expiresAfter($lifetime_value);
+            $cacheitempool->save($cache_item);
 
         endif;
 
