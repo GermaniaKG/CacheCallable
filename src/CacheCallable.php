@@ -95,11 +95,11 @@ class CacheCallable
 
 
         // Try to get from cache first:
-        $cachedContent = $cacheitempool->getItem($keyword);
+        $cache_item = $cacheitempool->getItem($keyword);
 
 
         // If found in cache:
-        if ($cachedContent->isHit()):
+        if ($cache_item->isHit()):
             $logger->info("Found in cache");
 
 
@@ -111,7 +111,7 @@ class CacheCallable
 
             // Create content
             $content       = $content_creator();
-            $cachedContent = $cachedContent->set($content);
+            $cache_item = $cache_item->set($content);
 
             if ($old_lifetime != $lifetime->getValue()) {
                 $logger->info("Lifetime has changed to " . $lifetime->getValue());
@@ -120,15 +120,15 @@ class CacheCallable
             // Store in cache if needed
             if ($lifetime->getValue() > 0) :
                 $logger->info("Store in cache", [ 'lifetime' => $lifetime->getValue() ]);
-                $cachedContent->expiresAfter($lifetime->getValue());
-                $cacheitempool->save($cachedContent);
+                $cache_item->expiresAfter($lifetime->getValue());
+                $cacheitempool->save($cache_item);
             else:
                 $logger->notice("DO NOT store in cache");
             endif;
 
         endif;
 
-        $result = $cachedContent->get();
+        $result = $cache_item->get();
         $logger->debug("Done.");
         return $result;
     }
