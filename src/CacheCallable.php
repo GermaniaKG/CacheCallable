@@ -46,7 +46,7 @@ class CacheCallable
         $this->cacheitempool   = $cacheitempool;
         $this->lifetime        = $lifetime instanceOf LifeTimeInterface ? $lifetime : new LifeTime($lifetime);
         $this->content_creator = $content_creator;
-        $this->logger          = $logger instanceOf LoggerInterface ? $logger : new NullLogger;
+        $this->logger          = $logger ? $logger : new NullLogger;
     }
 
 
