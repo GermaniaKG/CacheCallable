@@ -50,8 +50,8 @@ logs/*
 _schrott
 vendor
 node_modules
-var/*
-logs/*
-tests/build
+tests/logs
 build
 phpunit.xml
+.php_cs*
+.phpunit.result.cache
