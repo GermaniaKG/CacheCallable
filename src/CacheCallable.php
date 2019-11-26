@@ -46,7 +46,7 @@ class CacheCallable
         $this->cacheitempool   = $cacheitempool;
         $this->lifetime        = $lifetime instanceOf LifeTimeInterface ? $lifetime : new LifeTime($lifetime);
         $this->content_creator = $content_creator;
-        $this->logger          = $logger instanceOf LoggerInterface ? $logger : new NullLogger;
+        $this->logger          = $logger ? $logger : new NullLogger;
     }
 
 
@@ -74,8 +74,11 @@ class CacheCallable
             'content_creator' => $content_creator_type
         ]);
 
-        if ($lifetime->getValue() > 0) :
-            $logger->debug("Caching enabled", [ 'lifetime' => $lifetime->getValue() ]);
+
+        $lifetime_value = $lifetime->getValue();
+
+        if ($lifetime_value > 0) :
+            $logger->debug("Caching enabled", [ 'lifetime' => $lifetime_value ]);
         else:
             $logger->notice("Caching disabled");
 
@@ -95,11 +98,11 @@ class CacheCallable
 
 
         // Try to get from cache first:
-        $cachedContent = $cacheitempool->getItem($keyword);
+        $cache_item = $cacheitempool->getItem($keyword);
 
 
         // If found in cache:
-        if ($cachedContent->isHit()):
+        if ($cache_item->isHit()):
             $logger->info("Found in cache");
 
 
@@ -107,28 +110,18 @@ class CacheCallable
         else:
             $logger->info("Not found; Content to be created.");
 
-            $old_lifetime = $lifetime->getValue();
-
             // Create content
-            $content       = $content_creator();
-            $cachedContent = $cachedContent->set($content);
-
-            if ($old_lifetime != $lifetime->getValue()) {
-                $logger->info("Lifetime has changed to " . $lifetime->getValue());
-            }
+            $content    = $content_creator();
+            $cache_item = $cache_item->set($content);
 
             // Store in cache if needed
-            if ($lifetime->getValue() > 0) :
-                $logger->info("Store in cache", [ 'lifetime' => $lifetime->getValue() ]);
-                $cachedContent->expiresAfter($lifetime->getValue());
-                $cacheitempool->save($cachedContent);
-            else:
-                $logger->notice("DO NOT store in cache");
-            endif;
+            $logger->info("Store in cache", [ 'lifetime' => $lifetime_value ]);
+            $cache_item->expiresAfter($lifetime_value);
+            $cacheitempool->save($cache_item);
 
         endif;
 
-        $result = $cachedContent->get();
+        $result = $cache_item->get();
         $logger->debug("Done.");
         return $result;
     }
