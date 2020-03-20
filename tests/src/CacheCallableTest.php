@@ -38,6 +38,11 @@ class CacheCallableTest extends \PHPUnit\Framework\TestCase
 
         // Check content will be created
         $this->assertEquals( $callable_mock(), $sut("any_key_here"));
+
+        // Check Loglevel setting
+        $res = $sut->setSuccessLoglevel("debug");
+        $this->assertSame( $sut, $res);
+
     }
 
 

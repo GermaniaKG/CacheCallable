@@ -34,6 +34,13 @@ class CacheCallable
     public $logger = null;
 
 
+    /**
+     * PSR-3 Loglevel name
+     * @var string
+     */
+    public $loglevel_success = "info";
+
+
 
     /**
      * @param CacheItemPoolInterface $cacheitempool   PSR-6 Cache Item Pool
@@ -48,6 +55,15 @@ class CacheCallable
         $this->content_creator  = $content_creator;
         $this->logger           = $logger ? $logger : new NullLogger;
     }
+
+
+
+    public function setSuccessLoglevel( string $loglevel)
+    {
+        $this->loglevel_success = $loglevel;
+        return $this;
+    }
+
 
 
     /**
@@ -91,7 +107,7 @@ class CacheCallable
                 $logger->debug("No cached item to delete");
             endif;
 
-            $logger->info("Create content ...");
+            $logger->log($this->loglevel_success, "Create content ...");
             $result = $content_creator();
             $logger->debug("Done.");
             return $result;
@@ -104,7 +120,7 @@ class CacheCallable
 
         // If found in cache:
         if ($cache_item->isHit()):
-            $logger->info("Found in cache");
+            $logger->log($this->loglevel_success, "Found in cache");
             $result = $cache_item->get();
             $logger->debug("Done.");
             return $result;
@@ -112,13 +128,13 @@ class CacheCallable
 
 
         // Not found in cache, store.
-        $logger->info("Not found; Content to be created.");
+        $logger->log($this->loglevel_success, "Not found; Content to be created.");
 
         // Create result content
         $result    = $content_creator();
         $cache_item = $cache_item->set($result);
 
-        $logger->info("Store in cache", [ 'lifetime' => $lifetime_value ]);
+        $logger->log($this->loglevel_success, "Stored in cache", [ 'lifetime' => $lifetime_value ]);
         $cache_item->expiresAfter($lifetime_value);
         $cacheitempool->save($cache_item);
 
