@@ -16,7 +16,7 @@ class CacheCallable
     /**
      * @var LifeTimeInterface
      */
-    public $lifetime = null;
+    public $default_lifetime = null;
 
     /**
      * @var CacheItemPoolInterface
@@ -37,16 +37,16 @@ class CacheCallable
 
     /**
      * @param CacheItemPoolInterface $cacheitempool   PSR-6 Cache Item Pool
-     * @param int|LifeTimeInterface  $lifetime        Item lifetime in seconds or LifeTime object
+     * @param int|LifeTimeInterface  $lifetime        Item's default lifetime in seconds or LifeTime object
      * @param Callable               $content_creator Callable for content creation
      * @param LoggerInterface        $logger          Optional PSR-3 Logger; defaults to NullLogger
      */
     public function __construct(CacheItemPoolInterface $cacheitempool, $lifetime, Callable $content_creator, LoggerInterface $logger = null)
     {
-        $this->cacheitempool   = $cacheitempool;
-        $this->lifetime        = LifeTime::create($lifetime);
-        $this->content_creator = $content_creator;
-        $this->logger          = $logger ? $logger : new NullLogger;
+        $this->cacheitempool    = $cacheitempool;
+        $this->default_lifetime = LifeTime::create($lifetime);
+        $this->content_creator  = $content_creator;
+        $this->logger           = $logger ? $logger : new NullLogger;
     }
 
 
@@ -58,7 +58,7 @@ class CacheCallable
 
     public function __invoke($keyword, Callable $content_creator = null)
     {
-        $lifetime        = $this->lifetime;
+        $lifetime        = $this->default_lifetime;
         $logger          = $this->logger;
         $cacheitempool   = $this->cacheitempool;
 
