@@ -17,8 +17,17 @@ class LifeTime implements LifeTimeInterface {
 
     public function setValue($seconds)
     {
-        $this->seconds = $seconds;
+        $this->seconds = ($seconds instanceOf LifeTimeInterface)
+        ? $seconds->getValue()
+        : $seconds;
+
         return $this;
+    }
+
+
+    public static function create( $seconds )
+    {
+        return new static($seconds);
     }
 
 }

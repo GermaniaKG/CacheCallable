@@ -2,32 +2,60 @@
 namespace tests;
 
 use Germania\Cache\LifeTime;
+use Germania\Cache\LifeTimeInterface;
 
 
 class LifeTimeTest extends \PHPUnit\Framework\TestCase
 {
 
+
     public function testGetter() {
-        $sut = new LifeTime( 1 );
-        $this->assertEquals( 1, $sut->getValue() );
+        $value = 22;
+        $sut = new LifeTime( $value );
+        $this->assertEquals( $value, $sut->getValue() );
     }
 
 
-    public function testFluidInterface() {
+    /**
+     * @dataProvider provideValues
+     */
+    public function testFactoryMethos($value) {
+        $sut = LifeTime::create( $value );
+        $this->assertInstanceOf( LifeTime::class, $sut );
+    }
+
+
+    /**
+     * @dataProvider provideValues
+     */
+    public function testFluidInterface($value) {
         $sut = new LifeTime( 1 );
 
-        $new = 2;
+        $new = $sut->getValue() + 1;
         $this->assertSame( $sut, $sut->setValue( $new ) );
     }
 
-    public function testSetter() {
-        $sut = new LifeTime( 1 );
 
-        $new = 2;
-        $this->assertEquals( 2, $sut->setValue( $new )->getValue() );
+    /**
+     * @dataProvider provideValues
+     */
+    public function testSetter( $value ) {
+        $sut = new LifeTime( $value  );
+
+        $new = $sut->getValue() + 1;
+        $this->assertEquals( $new, $sut->setValue( $new )->getValue() );
     }
 
 
+    public function provideValues()
+    {
+        $LT_mock = $this->prophesize( LifeTimeInterface::class );
+        $LT_mock->getValue()->willReturn( 42) ;
 
+        return array(
+            [ 1 ],
+            [ $LT_mock->reveal() ],
+        );
+    }
 
 }

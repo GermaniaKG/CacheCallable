@@ -2,11 +2,13 @@
 namespace Germania\Cache;
 
 use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
 use Psr\Cache\CacheItemPoolInterface;
 
 class CacheCallable
 {
+    use LoggerAwareTrait;
 
     /**
      * @var mixed
@@ -16,7 +18,7 @@ class CacheCallable
     /**
      * @var LifeTimeInterface
      */
-    public $lifetime = null;
+    public $default_lifetime = null;
 
     /**
      * @var CacheItemPoolInterface
@@ -28,37 +30,49 @@ class CacheCallable
      */
     public $content_creator = null;
 
+
     /**
-     * @var LoggerInterface
+     * PSR-3 Loglevel name
+     * @var string
      */
-    public $logger = null;
+    public $loglevel_success = "info";
 
 
 
     /**
      * @param CacheItemPoolInterface $cacheitempool   PSR-6 Cache Item Pool
-     * @param int|LifeTimeInterface  $lifetime        Item lifetime in seconds or LifeTime object
+     * @param int|LifeTimeInterface  $lifetime        Item's default lifetime in seconds or LifeTime object
      * @param Callable               $content_creator Callable for content creation
      * @param LoggerInterface        $logger          Optional PSR-3 Logger; defaults to NullLogger
      */
     public function __construct(CacheItemPoolInterface $cacheitempool, $lifetime, Callable $content_creator, LoggerInterface $logger = null)
     {
-        $this->cacheitempool   = $cacheitempool;
-        $this->lifetime        = $lifetime instanceOf LifeTimeInterface ? $lifetime : new LifeTime($lifetime);
-        $this->content_creator = $content_creator;
-        $this->logger          = $logger ? $logger : new NullLogger;
+        $this->cacheitempool    = $cacheitempool;
+        $this->default_lifetime = LifeTime::create($lifetime);
+        $this->content_creator  = $content_creator;
+        $this->setLogger( $logger ?: new NullLogger);
     }
 
 
+
+    public function setSuccessLoglevel( string $loglevel)
+    {
+        $this->loglevel_success = $loglevel;
+        return $this;
+    }
+
+
+
     /**
-     * @param string   $keyword         Cache item identifier
-     * @param Callable $content_creator Optional Callable override for content creation
+     * @param string                 $keyword         Cache item identifier
+     * @param Callable               $content_creator Optional: Callable override for content creation
+     * @param int|LifeTimeInterface  $lifetime        Optional: Custom lifetime for item in seconds or LifeTime object
      * @return mixed
      */
 
-    public function __invoke($keyword, Callable $content_creator = null)
+    public function __invoke($keyword, Callable $content_creator = null, $lifetime = null)
     {
-        $lifetime        = $this->lifetime;
+        $lifetime        = LifeTime::create($lifetime ?: $this->default_lifetime);
         $logger          = $this->logger;
         $cacheitempool   = $this->cacheitempool;
 
@@ -90,7 +104,7 @@ class CacheCallable
                 $logger->debug("No cached item to delete");
             endif;
 
-            $logger->info("Create content ...");
+            $logger->log($this->loglevel_success, "Create content ...");
             $result = $content_creator();
             $logger->debug("Done.");
             return $result;
@@ -103,25 +117,24 @@ class CacheCallable
 
         // If found in cache:
         if ($cache_item->isHit()):
-            $logger->info("Found in cache");
-
-
-        // Not found in cache:
-        else:
-            $logger->info("Not found; Content to be created.");
-
-            // Create content
-            $content    = $content_creator();
-            $cache_item = $cache_item->set($content);
-
-            // Store in cache if needed
-            $logger->info("Store in cache", [ 'lifetime' => $lifetime_value ]);
-            $cache_item->expiresAfter($lifetime_value);
-            $cacheitempool->save($cache_item);
-
+            $logger->log($this->loglevel_success, "Found in cache");
+            $result = $cache_item->get();
+            $logger->debug("Done.");
+            return $result;
         endif;
 
-        $result = $cache_item->get();
+
+        // Not found in cache, store.
+        $logger->log($this->loglevel_success, "Not found; Content to be created.");
+
+        // Create result content
+        $result    = $content_creator();
+        $cache_item = $cache_item->set($result);
+
+        $logger->log($this->loglevel_success, "Stored in cache", [ 'lifetime' => $lifetime_value ]);
+        $cache_item->expiresAfter($lifetime_value);
+        $cacheitempool->save($cache_item);
+
         $logger->debug("Done.");
         return $result;
     }

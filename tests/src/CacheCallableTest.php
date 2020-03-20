@@ -33,11 +33,15 @@ class CacheCallableTest extends \PHPUnit\Framework\TestCase
         );
 
         // Code smell: Check member vars
-        $this->assertInstanceOf(LifeTimeInterface::class, $sut->lifetime);
-        $this->assertInstanceOf(LoggerInterface::class,   $sut->logger);
+        $this->assertInstanceOf(LifeTimeInterface::class, $sut->default_lifetime);
 
         // Check content will be created
         $this->assertEquals( $callable_mock(), $sut("any_key_here"));
+
+        // Check Loglevel setting
+        $res = $sut->setSuccessLoglevel("debug");
+        $this->assertSame( $sut, $res);
+
     }
 
 
@@ -55,7 +59,7 @@ class CacheCallableTest extends \PHPUnit\Framework\TestCase
             $callable_mock,
             $logger_mock
         );
-        $sut->lifetime->setValue( 1 );
+        $sut->default_lifetime->setValue( 1 );
         $this->assertEquals( $item->get(), $sut("foo"));
     }
 
@@ -75,8 +79,9 @@ class CacheCallableTest extends \PHPUnit\Framework\TestCase
             $callable_mock,
             $logger_mock
         );
-        $sut->lifetime->setValue( 1 );
+        $sut->default_lifetime->setValue( 1 );
         $this->assertEquals( $this->predefined_creator_content, $sut("foo"));
+        $this->assertEquals( $this->predefined_creator_content, $sut("foo", $callable_mock, $lifetime));
     }
 
 
@@ -103,7 +108,9 @@ class CacheCallableTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->assertEquals( $this->predefined_creator_content, $sut("foo"));
+        $this->assertEquals( $this->predefined_creator_content, $sut("foo", $callable_mock, $no_lifetime_object_revealed));
         $this->assertEquals( $this->predefined_creator_content, $sut("not_in_pool"));
+        $this->assertEquals( $this->predefined_creator_content, $sut("not_in_pool", $callable_mock, $no_lifetime_object_revealed));
     }
 
 

@@ -64,7 +64,9 @@ $something_unique = sha1($_SERVER['REQUEST_URI']);
 echo $wrapped_cache( $something_unique );
 ```
 
-## How to change lifetime during script runtime
+
+
+## The Cache lifetime
 
 Think of a webpage that turns out to be not cached during script runtime — *after* we set up the Cache wrapper. For this reason, the Cache wrapper constructor also accepts a **LifeTimeInterface** implementation with a *getValue* method:
 
@@ -80,13 +82,34 @@ interface LifeTimeInterface {
 
 The **LifeTime** **class** is a simple implementation of this interface. It additionally enables you to change the lifetime value during runtime. Since we passed it to our Cache constructor by reference, the Cache wrapper can decide *after* content creation wether to cache or not.
 
+
+
+### Create a Lifetime object
+
 ```php
 <?php
-use Germania\Cache\ CacheCallable;
+use Germania\Cache\CacheCallable;
 use Germania\Cache\LifeTime;
 
 // Setup LifeTime object
 $lifetime_object = new LifeTime( 3600 );
+
+// Use Factory method:
+$lifetime_object = LifeTime::create( 3600 );
+
+// Create from Lifetime instance
+$another_lifetime = new LifeTime( $lifetime_object );
+$another_lifetime = LifeTime::create( $lifetime_object );
+```
+
+
+
+### Usage with CacheCallable
+
+```php
+<?php
+use Germania\Cache\CacheCallable;
+use Germania\Cache\LifeTime;
 
 // Taken from example above
 $wrapped_cache = new CacheCallable(
@@ -94,10 +117,6 @@ $wrapped_cache = new CacheCallable(
 	$lifetime_object,
 	$creator
 );
-
-// Change LifeTime value during runtime, 
-// e.g. in router or controller
-$lifetime_object->setValue( 0 );
 ```
 
 Your Logger will now output something like this:
@@ -106,6 +125,74 @@ Your Logger will now output something like this:
 MyLogger DEBUG Lifetime after content creation: 0
 MyLogger NOTICE DO NOT store in cache
 ```
+
+
+
+### How to change lifetime during script runtime
+
+After instantation, you may use the *setValue* method:
+
+```php
+<?php
+namespace Germania\Cache;
+
+interface LifeTimeInterface {
+	// Return seconds to expiration
+	public function getValue();
+}
+```
+
+The **LifeTime** **class** is a simple implementation of this interface. It additionally enables you to change the lifetime value during runtime. Since we passed it to our Cache constructor by reference, the Cache wrapper can decide *after* content creation wether to cache or not.
+
+**Create a Lifetime object:**
+
+```php
+<?php
+use Germania\Cache\CacheCallable;
+use Germania\Cache\LifeTime;
+
+// Setup LifeTime object
+$lifetime_object = new LifeTime( 3600 );
+
+// Use Factory method:
+$lifetime_object = LifeTime::create( 3600 );
+
+// Create from Lifetime instance
+$another_lifetime = new LifeTime( $lifetime_object );
+$another_lifetime = LifeTime::create( $lifetime_object );
+```
+
+**Set time value** after instantation
+
+```php
+// Change LifeTime value during runtime, 
+// e.g. in router or controller
+$lifetime_object->setValue( 0 );
+```
+
+Usage with CacheCallable
+
+```php
+<?php
+use Germania\Cache\CacheCallable;
+use Germania\Cache\LifeTime;
+
+// Taken from example above
+$wrapped_cache = new CacheCallable(
+	$cacheItemPool,
+	$lifetime_object,
+	$creator
+);
+```
+
+Your Logger will now output something like this:
+
+```
+MyLogger DEBUG Lifetime after content creation: 0
+MyLogger NOTICE DO NOT store in cache
+```
+
+
 
 ## How to override content creation
 
@@ -140,7 +227,7 @@ $page_html = $wrapped_cache( $something_unique );
 
 The PSR-6 Caching Interface mock in *CacheCallableTest* could need an overhaul. Discuss on [#issue 3][i3]
 
-[i0]: https://github.com/GermaniaKG/CacheCallable/issues 
+[i0]: https://github.com/GermaniaKG/CacheCallable/issues
 [i3]: https://github.com/GermaniaKG/CacheCallable/issues/3
 
 ## Development
