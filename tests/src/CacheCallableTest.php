@@ -81,6 +81,7 @@ class CacheCallableTest extends \PHPUnit\Framework\TestCase
         );
         $sut->default_lifetime->setValue( 1 );
         $this->assertEquals( $this->predefined_creator_content, $sut("foo"));
+        $this->assertEquals( $this->predefined_creator_content, $sut("foo", $callable_mock, $lifetime));
     }
 
 
@@ -107,7 +108,9 @@ class CacheCallableTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->assertEquals( $this->predefined_creator_content, $sut("foo"));
+        $this->assertEquals( $this->predefined_creator_content, $sut("foo", $callable_mock, $no_lifetime_object_revealed));
         $this->assertEquals( $this->predefined_creator_content, $sut("not_in_pool"));
+        $this->assertEquals( $this->predefined_creator_content, $sut("not_in_pool", $callable_mock, $no_lifetime_object_revealed));
     }
 
 
