@@ -34,7 +34,6 @@ class CacheCallableTest extends \PHPUnit\Framework\TestCase
 
         // Code smell: Check member vars
         $this->assertInstanceOf(LifeTimeInterface::class, $sut->default_lifetime);
-        $this->assertInstanceOf(LoggerInterface::class,   $sut->logger);
 
         // Check content will be created
         $this->assertEquals( $callable_mock(), $sut("any_key_here"));

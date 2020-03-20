@@ -2,11 +2,13 @@
 namespace Germania\Cache;
 
 use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
 use Psr\Cache\CacheItemPoolInterface;
 
 class CacheCallable
 {
+    use LoggerAwareTrait;
 
     /**
      * @var mixed
@@ -28,11 +30,6 @@ class CacheCallable
      */
     public $content_creator = null;
 
-    /**
-     * @var LoggerInterface
-     */
-    public $logger = null;
-
 
     /**
      * PSR-3 Loglevel name
@@ -53,7 +50,7 @@ class CacheCallable
         $this->cacheitempool    = $cacheitempool;
         $this->default_lifetime = LifeTime::create($lifetime);
         $this->content_creator  = $content_creator;
-        $this->logger           = $logger ? $logger : new NullLogger;
+        $this->setLogger( $logger ?: new NullLogger);
     }
 
 
