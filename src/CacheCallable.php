@@ -51,14 +51,15 @@ class CacheCallable
 
 
     /**
-     * @param string   $keyword         Cache item identifier
-     * @param Callable $content_creator Optional Callable override for content creation
+     * @param string                 $keyword         Cache item identifier
+     * @param Callable               $content_creator Optional: Callable override for content creation
+     * @param int|LifeTimeInterface  $lifetime        Optional: Custom lifetime for item in seconds or LifeTime object
      * @return mixed
      */
 
-    public function __invoke($keyword, Callable $content_creator = null)
+    public function __invoke($keyword, Callable $content_creator = null, $lifetime = null)
     {
-        $lifetime        = $this->default_lifetime;
+        $lifetime        = LifeTime::create($lifetime ?: $this->default_lifetime);
         $logger          = $this->logger;
         $cacheitempool   = $this->cacheitempool;
 
@@ -104,24 +105,23 @@ class CacheCallable
         // If found in cache:
         if ($cache_item->isHit()):
             $logger->info("Found in cache");
-
-
-        // Not found in cache:
-        else:
-            $logger->info("Not found; Content to be created.");
-
-            // Create content
-            $content    = $content_creator();
-            $cache_item = $cache_item->set($content);
-
-            // Store in cache if needed
-            $logger->info("Store in cache", [ 'lifetime' => $lifetime_value ]);
-            $cache_item->expiresAfter($lifetime_value);
-            $cacheitempool->save($cache_item);
-
+            $result = $cache_item->get();
+            $logger->debug("Done.");
+            return $result;
         endif;
 
-        $result = $cache_item->get();
+
+        // Not found in cache, store.
+        $logger->info("Not found; Content to be created.");
+
+        // Create result content
+        $result    = $content_creator();
+        $cache_item = $cache_item->set($result);
+
+        $logger->info("Store in cache", [ 'lifetime' => $lifetime_value ]);
+        $cache_item->expiresAfter($lifetime_value);
+        $cacheitempool->save($cache_item);
+
         $logger->debug("Done.");
         return $result;
     }
