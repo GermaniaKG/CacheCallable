@@ -33,7 +33,7 @@ class CacheCallableTest extends \PHPUnit\Framework\TestCase
         );
 
         // Code smell: Check member vars
-        $this->assertInstanceOf(LifeTimeInterface::class, $sut->lifetime);
+        $this->assertInstanceOf(LifeTimeInterface::class, $sut->default_lifetime);
         $this->assertInstanceOf(LoggerInterface::class,   $sut->logger);
 
         // Check content will be created
@@ -55,7 +55,7 @@ class CacheCallableTest extends \PHPUnit\Framework\TestCase
             $callable_mock,
             $logger_mock
         );
-        $sut->lifetime->setValue( 1 );
+        $sut->default_lifetime->setValue( 1 );
         $this->assertEquals( $item->get(), $sut("foo"));
     }
 
@@ -75,7 +75,7 @@ class CacheCallableTest extends \PHPUnit\Framework\TestCase
             $callable_mock,
             $logger_mock
         );
-        $sut->lifetime->setValue( 1 );
+        $sut->default_lifetime->setValue( 1 );
         $this->assertEquals( $this->predefined_creator_content, $sut("foo"));
     }
 
