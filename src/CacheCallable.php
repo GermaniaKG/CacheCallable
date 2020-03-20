@@ -44,7 +44,7 @@ class CacheCallable
     public function __construct(CacheItemPoolInterface $cacheitempool, $lifetime, Callable $content_creator, LoggerInterface $logger = null)
     {
         $this->cacheitempool   = $cacheitempool;
-        $this->lifetime        = $lifetime instanceOf LifeTimeInterface ? $lifetime : new LifeTime($lifetime);
+        $this->lifetime        = LifeTime::create($lifetime);
         $this->content_creator = $content_creator;
         $this->logger          = $logger ? $logger : new NullLogger;
     }
