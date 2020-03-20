@@ -11,11 +11,6 @@ class CacheCallable
     use LoggerAwareTrait;
 
     /**
-     * @var mixed
-     */
-    public $data = null;
-
-    /**
      * @var LifeTimeInterface
      */
     public $default_lifetime = null;
