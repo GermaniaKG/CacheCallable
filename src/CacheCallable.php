@@ -109,7 +109,7 @@ class CacheCallable
 
         // Stampede/Dog pile protection (proprietary)
         if ($item instanceOf StashItemInterface):
-            $precompute_time = round($this->lifetime_value / 4);
+            $precompute_time = round($lifetime_value / 4);
             $item->setInvalidationMethod(StashInvalidation::PRECOMPUTE, $precompute_time);
         endif;
 
