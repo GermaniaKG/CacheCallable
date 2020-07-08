@@ -80,7 +80,7 @@ class CacheCallable
             $content_creator = $this->content_creator;
         }
 
-        $logger->log($this->loglevel_success, "Request item", [
+        $logger->info("Request item", [
             'keyword' => $keyword,
             'content_creator' => $content_creator_type
         ]);
