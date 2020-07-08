@@ -7,6 +7,10 @@ use Psr\Log\NullLogger;
 use Psr\Log\LogLevel;
 use Psr\Cache\CacheItemPoolInterface;
 
+use Stash\Interfaces\ItemInterface as StashItemInterface;
+use Stash\Invalidation as StashInvalidation;
+
+
 class CacheCallable
 {
     use LoggerAwareTrait;
