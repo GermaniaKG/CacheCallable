@@ -82,7 +82,7 @@ class CacheCallable
 
         $logger->info("Request item", [
             'keyword' => $keyword,
-            'content_creator' => $content_creator_type
+            'contentCreator' => $content_creator_type
         ]);
 
 
