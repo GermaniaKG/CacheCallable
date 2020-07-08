@@ -116,7 +116,7 @@ class CacheCallable
 
         // Just return cached value if valid
         if ($item->isHit()):
-            $logger->debug($this->loglevel_success, "Found in cache");
+            $logger->log($this->loglevel_success, "Found in cache");
             $result = $item->get();
             return $result;
         endif;
