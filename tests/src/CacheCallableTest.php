@@ -7,6 +7,7 @@ use Germania\Cache\CacheCallable;
 
 use Psr\Cache\CacheItemInterface;
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 use Prophecy\Argument;
 
@@ -175,10 +176,8 @@ class CacheCallableTest extends \PHPUnit\Framework\TestCase
         $lifetime_object_revealed = $lifetime_object->reveal();
 
 
-        $logger_mock = $this->createMock('Psr\Log\LoggerInterface');
-        $logger_mock = new Logger("CacheCallable Test", [
-            new StreamHandler('php://stdout', 0)
-        ]);
+        // $logger_mock = new Logger("CacheCallable Test", [ new StreamHandler('php://stdout', 0) ]);
+        $logger_mock = new NullLogger;
 
         $creator_mock    =  function () {
             return $this->predefined_creator_content;
