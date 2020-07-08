@@ -40,7 +40,7 @@ class CacheCallable
      * @param Callable               $content_creator Callable for content creation
      * @param LoggerInterface        $logger          Optional PSR-3 Logger; defaults to NullLogger
      */
-    public function __construct(CacheItemPoolInterface $cacheitempool, $lifetime, Callable $content_creator, LoggerInterface $logger = null)
+    public function __construct(CacheItemPoolInterface $cacheitempool, $lifetime, callable $content_creator, LoggerInterface $logger = null)
     {
         $this->cacheitempool    = $cacheitempool;
         $this->default_lifetime = LifeTime::create($lifetime);
@@ -65,7 +65,7 @@ class CacheCallable
      * @return mixed
      */
 
-    public function __invoke($keyword, Callable $content_creator = null, $lifetime = null)
+    public function __invoke($keyword, callable $content_creator = null, $lifetime = null)
     {
         $lifetime        = LifeTime::create($lifetime ?: $this->default_lifetime);
         $logger          = $this->logger;
