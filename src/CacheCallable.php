@@ -95,10 +95,10 @@ class CacheCallable
         if ($lifetime_value > 0) :
             $logger->debug("Caching enabled", [ 'lifetime' => $lifetime_value ]);
         else:
-            $logger->log($this->loglevel_success, "Cache lifetime is empty, must create content");
-
+            $logger->log($this->loglevel_success, "Cache lifetime is empty, must create content", [
+                'keyword' => $keyword
+            ]);
             $result = $content_creator($keyword);
-            $logger->debug("Done.");
             return $result;
         endif;
 
@@ -116,14 +116,18 @@ class CacheCallable
 
         // Just return cached value if valid
         if ($item->isHit()):
-            $logger->log($this->loglevel_success, "Found in cache");
+            $logger->log($this->loglevel_success, "Found in cache", [
+                'keyword' => $keyword
+            ]);
             $result = $item->get();
             return $result;
         endif;
 
 
         // Must rebuild: Create result content, using proprietary lock feature
-        $logger->log($this->loglevel_success, "Not found; Content to be created.");
+        $logger->log($this->loglevel_success, "Not found; Content to be created.", [
+            'keyword' => $keyword
+        ]);
 
         if ($item instanceOf StashItemInterface):
             $item->lock();
@@ -134,7 +138,7 @@ class CacheCallable
         $result = $content_creator($keyword);
         $item->set( $result );
 
-        $logger->log($this->loglevel_success, "Stored in cache", [ 'lifetime' => $lifetime_value ]);
+        $logger->log($this->loglevel_success, "Stored in cache", [ 'lifetime' => $lifetime_value, 'keyword' => $keyword ]);
         $item->expiresAfter($lifetime_value);
         $cacheitempool->save($item);
 
