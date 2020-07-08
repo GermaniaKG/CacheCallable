@@ -4,16 +4,12 @@ namespace Germania\Cache;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
+use Psr\Log\LogLevel;
 use Psr\Cache\CacheItemPoolInterface;
 
 class CacheCallable
 {
     use LoggerAwareTrait;
-
-    /**
-     * @var mixed
-     */
-    public $data = null;
 
     /**
      * @var LifeTimeInterface
@@ -35,7 +31,7 @@ class CacheCallable
      * PSR-3 Loglevel name
      * @var string
      */
-    public $loglevel_success = "info";
+    public $loglevel_success = LogLevel::INFO;
 
 
 
@@ -45,12 +41,13 @@ class CacheCallable
      * @param Callable               $content_creator Callable for content creation
      * @param LoggerInterface        $logger          Optional PSR-3 Logger; defaults to NullLogger
      */
-    public function __construct(CacheItemPoolInterface $cacheitempool, $lifetime, Callable $content_creator, LoggerInterface $logger = null)
+    public function __construct(CacheItemPoolInterface $cacheitempool, $lifetime, callable $content_creator, LoggerInterface $logger = null, string $loglevel_success = null)
     {
         $this->cacheitempool    = $cacheitempool;
         $this->default_lifetime = LifeTime::create($lifetime);
         $this->content_creator  = $content_creator;
         $this->setLogger( $logger ?: new NullLogger);
+        $this->loglevel_success  = $loglevel_success ? $loglevel_success : $this->loglevel_success;
     }
 
 
@@ -70,7 +67,7 @@ class CacheCallable
      * @return mixed
      */
 
-    public function __invoke($keyword, Callable $content_creator = null, $lifetime = null)
+    public function __invoke($keyword, callable $content_creator = null, $lifetime = null)
     {
         $lifetime        = LifeTime::create($lifetime ?: $this->default_lifetime);
         $logger          = $this->logger;
@@ -85,7 +82,7 @@ class CacheCallable
 
         $logger->info("Request item", [
             'keyword' => $keyword,
-            'content_creator' => $content_creator_type
+            'contentCreator' => $content_creator_type
         ]);
 
 
@@ -94,7 +91,7 @@ class CacheCallable
         if ($lifetime_value > 0) :
             $logger->debug("Caching enabled", [ 'lifetime' => $lifetime_value ]);
         else:
-            $logger->notice("Caching disabled");
+            $logger->debug("Caching disabled");
 
             // Remove that certain resource to avoid outdated results
             if ($cacheitempool->hasItem($keyword)) :
