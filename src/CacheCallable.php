@@ -7,6 +7,10 @@ use Psr\Log\NullLogger;
 use Psr\Log\LogLevel;
 use Psr\Cache\CacheItemPoolInterface;
 
+use Stash\Interfaces\ItemInterface as StashItemInterface;
+use Stash\Invalidation as StashInvalidation;
+
+
 class CacheCallable
 {
     use LoggerAwareTrait;
@@ -86,53 +90,54 @@ class CacheCallable
         ]);
 
 
+        // Always rebuild when no cache lifetime given
         $lifetime_value = $lifetime->getValue();
-
         if ($lifetime_value > 0) :
             $logger->debug("Caching enabled", [ 'lifetime' => $lifetime_value ]);
         else:
-            $logger->debug("Caching disabled");
+            $logger->log($this->loglevel_success, "Cache lifetime is empty, must create content");
 
-            // Remove that certain resource to avoid outdated results
-            if ($cacheitempool->hasItem($keyword)) :
-                $logger->debug("Delete cached item", [ 'keyword' => $keyword ]);
-                $cacheitempool->deleteItem($keyword);
-            else:
-                $logger->debug("No cached item to delete");
-            endif;
-
-            $logger->log($this->loglevel_success, "Create content ...");
-            $result = $content_creator();
+            $result = $content_creator($keyword);
             $logger->debug("Done.");
             return $result;
         endif;
 
 
-        // Try to get from cache first:
-        $cache_item = $cacheitempool->getItem($keyword);
+        // Grab CacheItem
+        $item = $cacheitempool->getItem($keyword);
 
 
-        // If found in cache:
-        if ($cache_item->isHit()):
+        // Stampede/Dog pile protection (proprietary)
+        if ($item instanceOf StashItemInterface):
+            $precompute_time = round($this->lifetime_value / 4);
+            $item->setInvalidationMethod(StashInvalidation::PRECOMPUTE, $precompute_time);
+        endif;
+
+
+        // Just return cached value if valid
+        if ($item->isHit()):
             $logger->log($this->loglevel_success, "Found in cache");
-            $result = $cache_item->get();
-            $logger->debug("Done.");
+            $result = $item->get();
             return $result;
         endif;
 
 
-        // Not found in cache, store.
+        // Must rebuild: Create result content, using proprietary lock feature
         $logger->log($this->loglevel_success, "Not found; Content to be created.");
 
-        // Create result content
-        $result    = $content_creator();
-        $cache_item = $cache_item->set($result);
+        if ($item instanceOf StashItemInterface):
+            $item->lock();
+        endif;
+
+
+        // Rebuild + save
+        $result = $content_creator($keyword);
+        $item = $item->set($result);
 
         $logger->log($this->loglevel_success, "Stored in cache", [ 'lifetime' => $lifetime_value ]);
-        $cache_item->expiresAfter($lifetime_value);
-        $cacheitempool->save($cache_item);
+        $item->expiresAfter($lifetime_value);
+        $cacheitempool->save($item);
 
-        $logger->debug("Done.");
         return $result;
     }
 

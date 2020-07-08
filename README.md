@@ -42,8 +42,8 @@ use Germania\Cache\CacheCallable;
 $cacheItemPool = CacheManager::getInstance('files', [ options ]);
 $lifetime      = 3600;
 $monolog       = new Logger( "My App" );
-$content_creator = function() {
-	return "My Website Content";
+$content_creator = function( $keyword ) {
+	return "Cache keyword: " . $keyword;
 };
 
 
@@ -58,10 +58,8 @@ $wrapped_cache = new CacheCallable(
 );
 
 // Identifying key. Example for a web page:
-$something_unique = sha1($_SERVER['REQUEST_URI']);
-
-// Get your data
-echo $wrapped_cache( $something_unique );
+$keyword = sha1($_SERVER['REQUEST_URI']);
+echo $wrapped_cache( $keyword );
 ```
 
 
@@ -199,10 +197,9 @@ MyLogger NOTICE DO NOT store in cache
 If you prefer singleton services, you may *invoke* the CacheCallable with a custom content creator parameter to override the default one:
 
 ```php
-// The default content creator for web page HTML
-$default_creator = function() {
-	// Assuming Twig
-	return $template->render( ... );
+// Default content creator
+$default_creator = function($file) {
+	return json_decode( file_get_contents($file) );
 };
 
 // Setup Service
@@ -212,14 +209,10 @@ $wrapped_cache = new CacheCallable(
     $default_creator
 );
 
-// Custom data creation for configuration
-$config = $wrapped_cache("my-config", function() {
-	return json_decode( file_get_contents("config.json") );
+// Override content creation 
+$config = $wrapped_cache("config.json", function( $file ) {
+	return array('foo' => 'bar');
 };
-
-// Identify web page, using SHA1 hash:
-$something_unique = sha1($_SERVER['REQUEST_URI']);
-$page_html = $wrapped_cache( $something_unique );
 ```
 
 
