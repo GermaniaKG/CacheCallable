@@ -105,13 +105,13 @@ class CacheCallable
 
 
         // Try to get from cache first:
-        $cache_item = $cacheitempool->getItem($keyword);
+        $item = $cacheitempool->getItem($keyword);
 
 
         // If found in cache:
-        if ($cache_item->isHit()):
+        if ($item->isHit()):
             $logger->log($this->loglevel_success, "Found in cache");
-            $result = $cache_item->get();
+            $result = $item->get();
             $logger->debug("Done.");
             return $result;
         endif;
@@ -122,11 +122,11 @@ class CacheCallable
 
         // Create result content
         $result    = $content_creator();
-        $cache_item = $cache_item->set($result);
+        $item = $item->set($result);
 
         $logger->log($this->loglevel_success, "Stored in cache", [ 'lifetime' => $lifetime_value ]);
-        $cache_item->expiresAfter($lifetime_value);
-        $cacheitempool->save($cache_item);
+        $item->expiresAfter($lifetime_value);
+        $cacheitempool->save($item);
 
         $logger->debug("Done.");
         return $result;
