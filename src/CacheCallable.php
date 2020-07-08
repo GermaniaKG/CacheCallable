@@ -89,7 +89,7 @@ class CacheCallable
         if ($lifetime_value > 0) :
             $logger->debug("Caching enabled", [ 'lifetime' => $lifetime_value ]);
         else:
-            $logger->notice("Caching disabled");
+            $logger->debug("Caching disabled");
 
             // Remove that certain resource to avoid outdated results
             if ($cacheitempool->hasItem($keyword)) :
