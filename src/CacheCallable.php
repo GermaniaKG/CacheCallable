@@ -90,45 +90,54 @@ class CacheCallable
         ]);
 
 
+        // Always rebuild when no cache lifetime given
         $lifetime_value = $lifetime->getValue();
-
         if ($lifetime_value > 0) :
             $logger->debug("Caching enabled", [ 'lifetime' => $lifetime_value ]);
         else:
-            $logger->debug("Caching disabled");
+            $logger->log($this->loglevel_success, "Cache lifetime is empty, must create content");
 
-            $logger->log($this->loglevel_success, "Create content ...");
-            $result = $content_creator();
+            $result = $content_creator($keyword);
             $logger->debug("Done.");
             return $result;
         endif;
 
 
-        // Try to get from cache first:
+        // Grab CacheItem
         $item = $cacheitempool->getItem($keyword);
 
 
-        // If found in cache:
+        // Stampede/Dog pile protection (proprietary)
+        if ($item instanceOf StashItemInterface):
+            $precompute_time = round($this->lifetime_value / 4);
+            $item->setInvalidationMethod(StashInvalidation::PRECOMPUTE, $precompute_time);
+        endif;
+
+
+        // Just return cached value if valid
         if ($item->isHit()):
-            $logger->log($this->loglevel_success, "Found in cache");
+            $logger->debug($this->loglevel_success, "Found in cache");
             $result = $item->get();
-            $logger->debug("Done.");
             return $result;
         endif;
 
 
-        // Not found in cache, store.
+        // Must rebuild: Create result content, using proprietary lock feature
         $logger->log($this->loglevel_success, "Not found; Content to be created.");
 
-        // Create result content
-        $result    = $content_creator();
+        if ($item instanceOf StashItemInterface):
+            $item->lock();
+        endif;
+
+
+        // Rebuild + save
+        $result = $content_creator($keyword);
         $item = $item->set($result);
 
         $logger->log($this->loglevel_success, "Stored in cache", [ 'lifetime' => $lifetime_value ]);
         $item->expiresAfter($lifetime_value);
         $cacheitempool->save($item);
 
-        $logger->debug("Done.");
         return $result;
     }
 
