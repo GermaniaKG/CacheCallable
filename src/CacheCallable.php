@@ -93,14 +93,6 @@ class CacheCallable
         else:
             $logger->debug("Caching disabled");
 
-            // Remove that certain resource to avoid outdated results
-            if ($cacheitempool->hasItem($keyword)) :
-                $logger->debug("Delete cached item", [ 'keyword' => $keyword ]);
-                $cacheitempool->deleteItem($keyword);
-            else:
-                $logger->debug("No cached item to delete");
-            endif;
-
             $logger->log($this->loglevel_success, "Create content ...");
             $result = $content_creator();
             $logger->debug("Done.");
