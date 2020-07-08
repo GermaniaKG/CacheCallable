@@ -132,7 +132,7 @@ class CacheCallable
 
         // Rebuild + save
         $result = $content_creator($keyword);
-        $item = $item->set($result);
+        $item->set( $result );
 
         $logger->log($this->loglevel_success, "Stored in cache", [ 'lifetime' => $lifetime_value ]);
         $item->expiresAfter($lifetime_value);
