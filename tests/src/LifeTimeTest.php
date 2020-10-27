@@ -3,11 +3,11 @@ namespace tests;
 
 use Germania\Cache\LifeTime;
 use Germania\Cache\LifeTimeInterface;
-
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class LifeTimeTest extends \PHPUnit\Framework\TestCase
 {
-
+    use ProphecyTrait;
 
     public function testGetter() {
         $value = 22;
