@@ -10,7 +10,7 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
 use Prophecy\Argument;
-
+use Prophecy\PhpUnit\ProphecyTrait;
 use mocks\CacheItemPoolMock;
 use mocks\CacheItemMock;
 use Monolog\Logger;
@@ -18,6 +18,7 @@ use Monolog\Handler\StreamHandler;
 
 class CacheCallableTest extends \PHPUnit\Framework\TestCase
 {
+    use ProphecyTrait;
 
     public $predefined_creator_content = 'predefined_content';
 
