@@ -29,6 +29,14 @@ build:
             environment:
                 php: 7.3
 
+        php74:
+            environment:
+                php: 7.4
+
+        php80:
+            environment:
+                php: 8.0
+
 
 checks:
     php:
