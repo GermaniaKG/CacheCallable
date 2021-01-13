@@ -4,6 +4,7 @@ namespace tests;
 use Germania\Cache\LifeTime;
 use Germania\Cache\LifeTimeInterface;
 use Germania\Cache\CacheCallable;
+use Germania\Cache\Md5CacheKeyCreator;
 
 use Psr\Cache\CacheItemInterface;
 use Psr\Log\LoggerInterface;
@@ -51,8 +52,8 @@ class CacheCallableTest extends \PHPUnit\Framework\TestCase
      * @dataProvider provideDefaults
      */
     public function testExistingCacheItem( $empty_item_pool_mock, $lifetime, $callable_mock, $logger_mock) {
-        // CacheItem->isHit() => true
-        $item = new CacheItemMock(md5("foo"), "bar", true);
+        $cache_key = "foo";
+        $item = new CacheItemMock($cache_key, "bar", true);
         $empty_item_pool_mock->save( $item );
 
         $sut = new CacheCallable(
@@ -62,8 +63,10 @@ class CacheCallableTest extends \PHPUnit\Framework\TestCase
             $logger_mock
         );
         $sut->default_lifetime->setValue( 1 );
-        $this->assertEquals( $item->get(), $sut("foo"));
+        $this->assertEquals( $item->get(), $sut($cache_key));
     }
+
+
 
 
 

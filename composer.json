@@ -50,7 +50,8 @@
     },
 
     "suggest": {
-    	"tedivm/stash" : "PHP Caching Library"
+    	"tedivm/stash" : "PHP Caching Library",
+    	"symfony/cache" : "Symfony's Caching Library"
     },
 
 
