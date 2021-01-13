@@ -4,6 +4,7 @@ namespace tests;
 use Germania\Cache\LifeTime;
 use Germania\Cache\LifeTimeInterface;
 use Germania\Cache\CacheCallable;
+use Germania\Cache\Md5CacheKeyCreator;
 
 use Psr\Cache\CacheItemInterface;
 use Psr\Log\LoggerInterface;
@@ -15,6 +16,7 @@ use mocks\CacheItemPoolMock;
 use mocks\CacheItemMock;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
 class CacheCallableTest extends \PHPUnit\Framework\TestCase
 {
@@ -51,8 +53,8 @@ class CacheCallableTest extends \PHPUnit\Framework\TestCase
      * @dataProvider provideDefaults
      */
     public function testExistingCacheItem( $empty_item_pool_mock, $lifetime, $callable_mock, $logger_mock) {
-        // CacheItem->isHit() => true
-        $item = new CacheItemMock("foo", "bar", true);
+        $cache_key = "foo";
+        $item = new CacheItemMock($cache_key, "bar", true);
         $empty_item_pool_mock->save( $item );
 
         $sut = new CacheCallable(
@@ -62,9 +64,8 @@ class CacheCallableTest extends \PHPUnit\Framework\TestCase
             $logger_mock
         );
         $sut->default_lifetime->setValue( 1 );
-        $this->assertEquals( $item->get(), $sut("foo"));
+        $this->assertEquals( $item->get(), $sut($cache_key));
     }
-
 
 
     /**
@@ -194,5 +195,40 @@ class CacheCallableTest extends \PHPUnit\Framework\TestCase
         );
 
     }
+
+
+
+
+
+    /**
+     * @dataProvider provideCacheKeysForSymfony
+     */
+    public function testWithSymfonyCacheComponent( $key )
+    {
+        $item_value = "foo";
+        $symfony_cache = new FilesystemAdapter();
+        $lifetime = 1;
+        $callable = function() use ($item_value) { return $item_value; };
+
+        $sut = new CacheCallable(
+            $symfony_cache,
+            $lifetime,
+            $callable
+        );
+
+        $result = $sut($key);
+        $this->assertEquals($result, $item_value );
+    }
+
+    public function provideCacheKeysForSymfony()
+    {
+        return array(
+            [ "foo" ],
+            [ "192.168.0.1" ],
+            [ "::1" ],
+            [ "path/to/site" ],
+        );
+    }
+
 
 }

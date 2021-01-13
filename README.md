@@ -64,6 +64,32 @@ echo $wrapped_cache( $keyword );
 
 
 
+## A word on cache keys
+
+According to the PSR-6 specs, cache keys should be limited to `A-Z, a-z, 0-9, _, and .` to ensure maximum compatibilty. So if you pass in a PSR-6 Adapter from [Symfony Cache component](https://symfony.com/doc/current/components/cache.html), class *CacheCallable* internally converts the given keys to a MD5 representation. 
+
+In case you'd like to provide a custom cache key creation, you may use the ***setCacheKeyCreator*** method whoch accepts any callable:
+
+```php
+$wrapped_cache->setCacheKeyCreator( function($raw) { return sha1($raw); } );
+```
+
+
+
+**PHP-FIG: [PSR-6: Caching Interface](https://www.php-fig.org/psr/psr-6/#definitions)**
+
+> Implementing libraries MUST support keys consisting of the characters A-Z, a-z, 0-9, _, and . in any order in UTF-8 encoding and a length of up to 64 characters. Implementing libraries MAY support additional characters and encodings or longer lengths, but must support at least that minimum.
+
+**Symfony docs: [“Cache Item Keys and Values”](https://symfony.com/doc/current/components/cache/cache_items.html#cache-item-keys-and-values)**
+
+> The key of a cache item […] should only contain letters (A-Z, a-z), numbers (0-9) and the _ and . symbols.
+
+
+
+
+
+
+
 ## The Cache lifetime
 
 Think of a webpage that turns out to be not cached during script runtime — *after* we set up the Cache wrapper. For this reason, the Cache wrapper constructor also accepts a **LifeTimeInterface** implementation with a *getValue* method:
@@ -214,6 +240,9 @@ $config = $wrapped_cache("config.json", function( $file ) {
 	return array('foo' => 'bar');
 };
 ```
+
+
+
 
 
 ## Issues

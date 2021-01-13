@@ -9,7 +9,7 @@ use Psr\Cache\CacheItemPoolInterface;
 
 use Stash\Interfaces\ItemInterface as StashItemInterface;
 use Stash\Invalidation as StashInvalidation;
-
+use Symfony\Component\Cache\Adapter\AdapterInterface as SymfonyCacheAdapter;
 
 class CacheCallable
 {
@@ -30,12 +30,18 @@ class CacheCallable
      */
     public $content_creator = null;
 
+    /**
+     * @var callable
+     */
+    public $cache_key_creator = null;
+
 
     /**
      * PSR-3 Loglevel name
      * @var string
      */
     public $loglevel_success = LogLevel::INFO;
+
 
 
 
@@ -47,13 +53,34 @@ class CacheCallable
      */
     public function __construct(CacheItemPoolInterface $cacheitempool, $lifetime, callable $content_creator, LoggerInterface $logger = null, string $loglevel_success = null)
     {
-        $this->cacheitempool    = $cacheitempool;
+        $this->setCacheKeyCreator( null );
+        $this->setCacheItemPool($cacheitempool);
         $this->default_lifetime = LifeTime::create($lifetime);
         $this->content_creator  = $content_creator;
         $this->setLogger( $logger ?: new NullLogger);
         $this->loglevel_success  = $loglevel_success ? $loglevel_success : $this->loglevel_success;
     }
 
+
+
+    public function setCacheItemPool( CacheItemPoolInterface $cacheitempool)
+    {
+        $this->cacheitempool = $cacheitempool;
+
+        if ($cacheitempool instanceOf SymfonyCacheAdapter) {
+            $this->setCacheKeyCreator(new Md5CacheKeyCreator);
+        }
+
+        return $this;
+    }
+
+
+    public function setCacheKeyCreator( $creator )
+    {
+        $creator = $creator ?: function($raw) { return $raw; };
+        $this->cache_key_creator = $creator;
+        return $this;
+    }
 
 
     public function setSuccessLoglevel( string $loglevel)
@@ -104,7 +131,8 @@ class CacheCallable
 
 
         // Grab CacheItem
-        $item = $cacheitempool->getItem($keyword);
+        $cache_keyword = ($this->cache_key_creator)($keyword);
+        $item = $cacheitempool->getItem($cache_keyword);
 
 
         // Stampede/Dog pile protection (proprietary)
