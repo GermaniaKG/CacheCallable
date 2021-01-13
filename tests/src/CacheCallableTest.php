@@ -16,6 +16,7 @@ use mocks\CacheItemPoolMock;
 use mocks\CacheItemMock;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
 class CacheCallableTest extends \PHPUnit\Framework\TestCase
 {
@@ -65,9 +66,6 @@ class CacheCallableTest extends \PHPUnit\Framework\TestCase
         $sut->default_lifetime->setValue( 1 );
         $this->assertEquals( $item->get(), $sut($cache_key));
     }
-
-
-
 
 
     /**
@@ -197,5 +195,40 @@ class CacheCallableTest extends \PHPUnit\Framework\TestCase
         );
 
     }
+
+
+
+
+
+    /**
+     * @dataProvider provideCacheKeysForSymfony
+     */
+    public function testWithSymfonyCacheComponent( $key )
+    {
+        $item_value = "foo";
+        $symfony_cache = new FilesystemAdapter();
+        $lifetime = 1;
+        $callable = function() use ($item_value) { return $item_value; };
+
+        $sut = new CacheCallable(
+            $symfony_cache,
+            $lifetime,
+            $callable
+        );
+
+        $result = $sut($key);
+        $this->assertEquals($result, $item_value );
+    }
+
+    public function provideCacheKeysForSymfony()
+    {
+        return array(
+            [ "foo" ],
+            [ "192.168.0.1" ],
+            [ "::1" ],
+            [ "path/to/site" ],
+        );
+    }
+
 
 }
