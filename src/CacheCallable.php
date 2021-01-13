@@ -104,7 +104,8 @@ class CacheCallable
 
 
         // Grab CacheItem
-        $item = $cacheitempool->getItem($keyword);
+        $cache_keyword = md5($keyword);
+        $item = $cacheitempool->getItem($cache_keyword);
 
 
         // Stampede/Dog pile protection (proprietary)

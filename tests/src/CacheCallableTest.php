@@ -52,7 +52,7 @@ class CacheCallableTest extends \PHPUnit\Framework\TestCase
      */
     public function testExistingCacheItem( $empty_item_pool_mock, $lifetime, $callable_mock, $logger_mock) {
         // CacheItem->isHit() => true
-        $item = new CacheItemMock("foo", "bar", true);
+        $item = new CacheItemMock(md5("foo"), "bar", true);
         $empty_item_pool_mock->save( $item );
 
         $sut = new CacheCallable(
