@@ -54,4 +54,4 @@ tests/logs
 build
 phpunit.xml
 .php_cs*
-.phpunit.result.cache
+.phpunit.result.cachephpstan.neon

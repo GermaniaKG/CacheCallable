@@ -4,11 +4,7 @@
 
 [![Packagist](https://img.shields.io/packagist/v/germania-kg/cachecallable.svg?style=flat)](https://packagist.org/packages/germania-kg/cachecallable)
 [![PHP version](https://img.shields.io/packagist/php-v/germania-kg/cachecallable.svg)](https://packagist.org/packages/germania-kg/cachecallable)
-[![Build Status](https://img.shields.io/travis/GermaniaKG/CacheCallable.svg?label=Travis%20CI)](https://travis-ci.org/GermaniaKG/CacheCallable)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/GermaniaKG/CacheCallable/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/GermaniaKG/CacheCallable/?branch=master)
-[![Code Coverage](https://scrutinizer-ci.com/g/GermaniaKG/CacheCallable/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/GermaniaKG/CacheCallable/?branch=master)
-[![Build Status](https://scrutinizer-ci.com/g/GermaniaKG/CacheCallable/badges/build.png?b=master)](https://scrutinizer-ci.com/g/GermaniaKG/CacheCallable/build-status/master)
-
+[![Tests](https://github.com/GermaniaKG/CacheCallable/actions/workflows/tests.yml/badge.svg)](https://github.com/GermaniaKG/CacheCallable/actions/workflows/tests.yml)
 
 
 **Callable convenience wrapper around PSR-6 [Cache Item Pools](http://www.php-fig.org/psr/psr-6/#cacheitempoolinterface): Seamlessly creates, returns, and stores your data.**
