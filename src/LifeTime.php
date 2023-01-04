@@ -27,7 +27,7 @@ class LifeTime implements LifeTimeInterface {
 
     public static function create( $seconds )
     {
-        return new static($seconds);
+        return new LifeTime($seconds);
     }
 
 }

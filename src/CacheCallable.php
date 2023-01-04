@@ -7,9 +7,8 @@ use Psr\Log\NullLogger;
 use Psr\Log\LogLevel;
 use Psr\Cache\CacheItemPoolInterface;
 
-use Stash\Interfaces\ItemInterface as StashItemInterface;
-use Stash\Invalidation as StashInvalidation;
-use Symfony\Component\Cache\Adapter\AdapterInterface as SymfonyCacheAdapter;
+use Stash\Interfaces\ItemInterface;
+use Stash\Invalidation;
 
 class CacheCallable
 {
@@ -67,7 +66,7 @@ class CacheCallable
     {
         $this->cacheitempool = $cacheitempool;
 
-        if ($cacheitempool instanceOf SymfonyCacheAdapter) {
+        if ($cacheitempool instanceOf \Symfony\Component\Cache\Adapter\AdapterInterface) {
             $this->setCacheKeyCreator(new Md5CacheKeyCreator);
         }
 
@@ -136,9 +135,9 @@ class CacheCallable
 
 
         // Stampede/Dog pile protection (proprietary)
-        if ($item instanceOf StashItemInterface):
+        if ($item instanceOf \Stash\Interfaces\ItemInterface):
             $precompute_time = round($lifetime_value / 4);
-            $item->setInvalidationMethod(StashInvalidation::PRECOMPUTE, $precompute_time);
+            $item->setInvalidationMethod(\Stash\Invalidation::PRECOMPUTE, $precompute_time);
         endif;
 
 
@@ -157,7 +156,7 @@ class CacheCallable
             'keyword' => $keyword
         ]);
 
-        if ($item instanceOf StashItemInterface):
+        if ($item instanceOf \Stash\Interfaces\ItemInterface):
             $item->lock();
         endif;
 
